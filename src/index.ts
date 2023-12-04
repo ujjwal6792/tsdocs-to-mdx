@@ -1,13 +1,17 @@
-// const fs = require("fs");
-// const path = require("path");
 import * as fs from "fs";
 import * as path from "path";
+import findDirectories, { dirDetailsArray } from "./utils/findDirectories";
+
+interface dirDetails {
+  dirPath: string;
+  isDir: boolean;
+}
 
 const readDocsFolder = async (tsdocsDir: string | null): Promise<void> => {
   if (typeof tsdocsDir !== "string") {
-    return console.log("use valid path"); // Assume it's not a directory if check fails
+    return console.log("use a valid path"); // Assume it's not a directory if check fails
   }
-  const data = await new Promise((resolve) =>
+  const data: dirDetailsArray | void = await new Promise((resolve) =>
     fs.readdir(
       tsdocsDir,
       async (err: NodeJS.ErrnoException | null, files: string[]) => {
@@ -21,45 +25,41 @@ const readDocsFolder = async (tsdocsDir: string | null): Promise<void> => {
       },
     ),
   );
-  console.log("the data is: ", data);
+  const filesArray = data?.map((obj: dirDetails) => obj.dirPath);
+  console.log("the data is: ", filesArray);
+  const outputFolder = "./outputHtmlDir";
+  createFolderIfNotExists(outputFolder);
+  moveHtmlFiles(filesArray, tsdocsDir, outputFolder);
 };
 
-const findDirectories = (array: string[]) => {
-  if (!Array.isArray(array)) {
-    return console.log("Input is not an array");
+readDocsFolder("./tsdocs/functions");
+
+function createFolderIfNotExists(folderPath: string) {
+  if (!fs.existsSync(folderPath)) {
+    fs.mkdirSync(folderPath);
   }
+}
 
-  const checkDirectory = (dirname: string) => {
-    return new Promise((resolve, reject) => {
-      fs.stat(dirname, (err: NodeJS.ErrnoException | null, stat: fs.Stats) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(stat.isDirectory());
-        }
-      });
-    });
-  };
+function moveHtmlFiles(
+  files: string[] | undefined,
+  source: string,
+  destination: string,
+) {
+  if (!Array.isArray(files)) {
+    return console.log("no files array found");
+  }
+  files.forEach((file) => {
+    const filePath = path.join(source, file);
+    if (fs.existsSync(filePath) && file.endsWith(".html")) {
+      const folderName = file.split(".")[0];
+      const targetFolder = path.join(destination, folderName);
 
-  const checkAllDirectories = async () => {
-    try {
-      const results = await Promise.all(
-        array.map(async (dirname) => {
-          try {
-            return { dirPath: dirname, isDir: await checkDirectory(dirname) };
-          } catch (error) {
-            console.error(`Error checking directory: ${dirname}`, error);
-            return { dirPath: dirname, isDir: false }; // Assume it's not a directory if there's an error
-          }
-        }),
-      );
-      return results;
-    } catch (error) {
-      console.error("Error processing directories:", error);
-      return [];
+      createFolderIfNotExists(targetFolder);
+
+      const newFilePath = path.join(targetFolder, file);
+
+      fs.renameSync(filePath, newFilePath);
+      console.log(`Moved ${file} to ${targetFolder}`);
     }
-  };
-  return checkAllDirectories();
-};
-
-readDocsFolder("./tsdocs");
+  });
+}
