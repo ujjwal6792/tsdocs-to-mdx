@@ -19,7 +19,7 @@ const readDocsFolder = async (tsdocsDir) => {
       resolve(await findDirectories(folders));
     }),
   );
-  return console.log(data);
+  return console.log("the data is: ", data);
 };
 
 const findDirectories = (array) => {
@@ -44,10 +44,10 @@ const findDirectories = (array) => {
       const results = await Promise.all(
         array.map(async (dirname) => {
           try {
-            return await checkDirectory(dirname);
+            return { dirPath: dirname, isDir: await checkDirectory(dirname) };
           } catch (error) {
             console.error(`Error checking directory: ${dirname}`, error);
-            return false; // Assume it's not a directory if there's an error
+            return { dirPath: dirname, isDir: false }; // Assume it's not a directory if there's an error
           }
         }),
       );
@@ -57,7 +57,7 @@ const findDirectories = (array) => {
       return [];
     }
   };
-
+  console.log("input array", array);
   return checkAllDirectories();
 };
 
