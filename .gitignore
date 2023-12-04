@@ -1,0 +1,10 @@
+#Ignore Input folder
+/tsdocs
+
+# Ignore generated distribution files
+/dist
+
+# Ignore node_modules directory
+/node_modules
+
+

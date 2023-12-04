@@ -1,35 +1,37 @@
-const fs = require("fs");
-const path = require("path");
+// const fs = require("fs");
+// const path = require("path");
+import * as fs from "fs";
+import * as path from "path";
 
-const readDocsFolder = async (tsdocsDir) => {
-  if (
-    typeof tsdocsDir !== "string" &&
-    (tsdocsDir.slice(0, 2) !== "./" || tsdocsDir.slice(0, 2) !== "../")
-  ) {
+const readDocsFolder = async (tsdocsDir: string | null): Promise<void> => {
+  if (typeof tsdocsDir !== "string") {
     return console.log("use valid path"); // Assume it's not a directory if check fails
   }
   const data = await new Promise((resolve) =>
-    fs.readdir(tsdocsDir, async (err, files) => {
-      if (err) {
-        return console.log(err);
-      }
-      const folders = files.map((file) => {
-        return path.join(tsdocsDir, file);
-      });
-      resolve(await findDirectories(folders));
-    }),
+    fs.readdir(
+      tsdocsDir,
+      async (err: NodeJS.ErrnoException | null, files: string[]) => {
+        if (err) {
+          return console.log(err);
+        }
+        const folders = files.map((file) => {
+          return path.join(tsdocsDir, file);
+        });
+        resolve(await findDirectories(folders));
+      },
+    ),
   );
-  return console.log("the data is: ", data);
+  console.log("the data is: ", data);
 };
 
-const findDirectories = (array) => {
+const findDirectories = (array: string[]) => {
   if (!Array.isArray(array)) {
     return console.log("Input is not an array");
   }
 
-  const checkDirectory = (dirname) => {
+  const checkDirectory = (dirname: string) => {
     return new Promise((resolve, reject) => {
-      fs.stat(dirname, (err, stat) => {
+      fs.stat(dirname, (err: NodeJS.ErrnoException | null, stat: fs.Stats) => {
         if (err) {
           reject(err);
         } else {
@@ -57,7 +59,6 @@ const findDirectories = (array) => {
       return [];
     }
   };
-  console.log("input array", array);
   return checkAllDirectories();
 };
 

@@ -3,12 +3,18 @@
   "version": "0.0.1",
   "description": "converts tsdoc json output to markdown",
   "main": "index.ts",
+  "type": "commonJs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "ujjwal sharma",
   "license": "ISC",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node dist/index.js"
+  },
   "devDependencies": {
+    "@types/node": "^20.10.3",
     "eslint": "^8.54.0",
     "typescript": "^5.3.2"
   },
