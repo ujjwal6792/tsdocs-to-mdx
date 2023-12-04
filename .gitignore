@@ -8,5 +8,5 @@
 /node_modules
 
 /.DS_Store
-/.outputHtmlDir
+/outputHtmlDir
 .DS_Store
