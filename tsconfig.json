@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Node"
+    /* ... your props ... */
+  },
+  "ts-node": {
+    "esm": true
+  }
+}
