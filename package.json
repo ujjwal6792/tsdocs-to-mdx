@@ -6,7 +6,7 @@
   "type": "commonJs",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && node dist/index.js ./tsdocs"
+    "start": "npm run build && node dist/starlight.js ./tsdocs"
   },
   "author": "ujjwal sharma",
   "license": "ISC",
